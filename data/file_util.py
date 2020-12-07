@@ -62,15 +62,6 @@ def file_exists(filepath):
     return os.path.isfile(filepath)
 
 
-def read_scraped_reviews():
-    """
-    Reads the pickled reviews file sourced from scraping
-    :return: multidimensional list of reviews
-    """
-    filepath = os.path.join(ROOT_DIR, "static/scraped_reviews.pickle")
-    return read_pickled_object(filepath)
-
-
 def read_kaggle_reviews():
     """
     Reads the kaggle reviews file
@@ -78,15 +69,6 @@ def read_kaggle_reviews():
     """
     kaggle_df = pd.read_csv(KAGGLE_CSV)
     return kaggle_df
-
-
-def read_manual_reviews():
-    """
-    Reads manual written reviews
-    :return: dataframe
-    """
-    manual_df = pd.read_csv(MANUAL_CSV, delimiter=";;", engine="python", header=0)
-    return manual_df
 
 
 def read_precleaned_reviews():
