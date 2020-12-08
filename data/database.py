@@ -1,5 +1,6 @@
 from config import HOST, PORT, DATABASE_NAME
 from pymongo import MongoClient
+import pandas as pd
 
 
 def create_connection():
@@ -20,3 +21,18 @@ def df_to_db(db, dataframe):
         db.collection.insert_many(dataframe.to_dict('records'))
     except Exception as e:
         print(f"Database error: {e}")
+
+
+def query_all(db):
+    """
+    Queries all records from the database
+    Ref: https://stackoverflow.com/a/16255680/7174982
+    :param db: database object
+    :return: dataframe
+    """
+    collection = db["collection"]
+    query = {}
+    cursor = collection.find(query)
+    dataframe = pd.DataFrame(list(cursor))
+    del dataframe['_id']
+    return dataframe
