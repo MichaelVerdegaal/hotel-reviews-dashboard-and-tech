@@ -11,4 +11,5 @@ YOUR_REVIEWS = "static/enter_your_reviews.xlsx"
 # Unless you also use localhost, don't fill in your database credentials here.
 # Create a separate config file with your credentials in that case.
 HOST = "localhost"
+DATABASE_NAME = "reviews"
 PORT = 27017
