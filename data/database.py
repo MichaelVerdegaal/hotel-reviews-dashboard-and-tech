@@ -17,6 +17,11 @@ def create_connection():
 
 
 def df_to_db(db, dataframe):
+    """
+    Inserts a dataframe into the database
+    :param db: database object
+    :param dataframe: pandas dataframe
+    """
     try:
         db.collection.insert_many(dataframe.to_dict('records'))
     except Exception as e:
