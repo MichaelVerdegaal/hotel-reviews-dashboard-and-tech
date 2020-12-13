@@ -1,5 +1,5 @@
-from data.dataframes import *
-from data.file_util import *
+from data.dataframes import clean_and_label
+from data.file_util import read_kaggle_reviews
 
 if __name__ == '__main__':
     """
