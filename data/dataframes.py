@@ -3,11 +3,10 @@ import re
 
 import nltk
 import pandas as pd
-from langdetect import detect
 from textblob import TextBlob
 
 from config import ROOT_DIR
-from data.file_util import read_kaggle_reviews, file_exists, read_pickled_dataframe, pickle_dataframe
+from data.file_util import file_exists, read_pickled_dataframe, pickle_dataframe
 
 usable_column_list = ["Hotel_Address", "Average_Score", "Hotel_Name", "Reviewer_Nationality", "Negative_Review",
                       "Positive_Review", "Reviewer_Score"]
@@ -16,22 +15,6 @@ print("\nDownloading nltk libraries...")
 nltk.download('stopwords')
 nltk.download('wordnet')
 lst_stopwords = nltk.corpus.stopwords.words("english")
-
-
-def is_en(text):
-    """
-    If a string is in english or not
-    :param text: string
-    :return: boolean
-    """
-    try:
-        if text == "" or text is None:
-            return False
-        langcode = detect(text)
-        # Portugal code is included because it incorrectly detects some english text as portuguese
-        return langcode in ['en', 'ca', 'pt']
-    except:
-        return False
 
 
 def pre_process_text(text):
@@ -63,6 +46,7 @@ def label_sentiment(df):
     :param df: dataframe
     :return: dataframe
     """
+
     def return_sentiment(text):
         """
         Judges sentiment of string, 1 being positive, and 0 being negative
@@ -82,31 +66,10 @@ def label_sentiment(df):
         return df
 
 
-def preliminary_clean(df):
+def clean_and_label(df):
     """
-    Perform early cleaning to allow for labeling
-    :param df: dataframe
-    :return: dataframe
-    """
-    filepath = os.path.join(ROOT_DIR, "static/preliminary_clean_df.pickle")
-    if file_exists(filepath):
-        return read_pickled_dataframe(filepath)
-    else:
-        print("\nMerging columns...")
-        df['Review_Original'] = df['Positive_Review'] + ' ' + df['Negative_Review']
-        df = df.drop('Positive_Review', 1)
-        df = df.drop('Negative_Review', 1)
-
-        print("\nRemoving non-english reviews...")
-        df = df[df['Review_Original'].apply(lambda x: is_en(x))]
-        pickle_dataframe(df, filepath)
-        print(f"\nWritten reviews to {filepath}!")
-        return df
-
-
-def clean_df_text(df):
-    """
-    clean review column
+    Explodes negative and positive review columns into 2 rows and labels the sentiment at the same time, then cleans
+    the text.
     :param df: dataframe
     :return: dataframe
     """
@@ -114,11 +77,47 @@ def clean_df_text(df):
     if file_exists(filepath):
         return read_pickled_dataframe(filepath)
     else:
+        print("\nSplitting columns...")
+        df_size = len(df)
+        columns = ['Hotel_Address', 'Review_Date', 'Average_Score', 'Hotel_Name', 'Reviewer_Nationality',
+                   'Reviewer_Score', 'lat', 'lng', 'Review', 'Sentiment']
+        row_list = []
+
+        for index, row in df.iterrows():
+            print(f"Splitting row {index}//{df_size}")
+            row1 = {'Hotel_Address': row['Hotel_Address'],
+                    'Review_Date': row['Review_Date'],
+                    'Average_Score': row['Average_Score'],
+                    'Hotel_Name': row['Hotel_Name'],
+                    'Reviewer_Nationality': row['Reviewer_Nationality'],
+                    'Reviewer_Score': row['Reviewer_Score'],
+                    'lat': row['lat'],
+                    'lng': row['lng'],
+                    'Review': row['Positive_Review'],
+                    'Sentiment': 1}
+
+            row2 = {'Hotel_Address': row['Hotel_Address'],
+                    'Review_Date': row['Review_Date'],
+                    'Average_Score': row['Average_Score'],
+                    'Hotel_Name': row['Hotel_Name'],
+                    'Reviewer_Nationality': row['Reviewer_Nationality'],
+                    'Reviewer_Score': row['Reviewer_Score'],
+                    'lat': row['lat'],
+                    'lng': row['lng'],
+                    'Review': row['Negative_Review'],
+                    'Sentiment': 0}
+            row_list.append(row1)
+            row_list.append(row2)
+        new_df = pd.DataFrame(row_list, columns=columns)
+
         print("\nPre-processing text...")
-        df['Review'] = df['Review_Original'].apply(pre_process_text)
+        new_df['Review'] = new_df['Review'].apply(pre_process_text)
 
-        pickle_dataframe(df, filepath)
+        print("\nDropping reviews with custom stop-words...")
+        # Custom stop-words based on manual observation of the data
+        custom_stop_words = ['negative', 'nothing', 'positive', 'n']
+        new_df = new_df[~new_df['Review'].isin(custom_stop_words)]
+
         print(f"\nWritten reviews to {filepath}!")
-        return df
-
-
+        pickle_dataframe(new_df, filepath)
+        return new_df
