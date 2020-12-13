@@ -71,30 +71,12 @@ def read_kaggle_reviews():
     return kaggle_df
 
 
-def read_precleaned_reviews():
-    """
-    Reads reviews that had some prior cleaning
-    :return: dataframe
-    """
-    filepath = os.path.join(ROOT_DIR, PRELIMINARY_CLEAN_DF)
-    return read_pickled_dataframe(filepath)
-
-
 def read_clean_reviews():
     """
     Reads reviews that were cleaned
     :return: dataframe
     """
     filepath = os.path.join(ROOT_DIR, CLEAN_DF)
-    return read_pickled_dataframe(filepath)
-
-
-def read_labeled_reviews():
-    """
-    Reads reviews that were labeled
-    :return: dataframe
-    """
-    filepath = os.path.join(ROOT_DIR, LABELED_DF)
     return read_pickled_dataframe(filepath)
 
 
