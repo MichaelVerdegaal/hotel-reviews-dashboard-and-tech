@@ -28,16 +28,20 @@ def df_to_db(db, dataframe):
         print(f"Database error: {e}")
 
 
-def query_all(db):
+def query_all(db, count=0):
     """
-    Queries all records from the database
+    Queries all records from the database, optionally limiting results count
     Ref: https://stackoverflow.com/a/16255680/7174982
     :param db: database object
+    :param count: amount of results to return, if not provided returns all results
     :return: dataframe
     """
     collection = db["collection"]
     query = {}
-    cursor = collection.find(query)
+    if count > 0:
+        cursor = collection.find(query, limit=count)
+    else:
+        cursor = collection.find(query)
     dataframe = pd.DataFrame(list(cursor))
     del dataframe['_id']
     return dataframe
