@@ -3,13 +3,9 @@ import re
 
 import nltk
 import pandas as pd
-from textblob import TextBlob
 
 from config import ROOT_DIR
 from data.file_util import file_exists, read_pickled_dataframe, pickle_dataframe
-
-usable_column_list = ["Hotel_Address", "Average_Score", "Hotel_Name", "Reviewer_Nationality", "Negative_Review",
-                      "Positive_Review", "Reviewer_Score"]
 
 print("\nDownloading nltk libraries...")
 nltk.download('stopwords')
@@ -38,32 +34,6 @@ def pre_process_text(text):
     # Rejoin tokenized string
     text = " ".join(lst_text)
     return text
-
-
-def label_sentiment(df):
-    """
-    Adds a new column to the dataframe, labeling the sentiment of the reviews using TextBlob PatternAnalyzer
-    :param df: dataframe
-    :return: dataframe
-    """
-
-    def return_sentiment(text):
-        """
-        Judges sentiment of string, 1 being positive, and 0 being negative
-        :param text: string
-        :return: 1 or 0
-        """
-        obj = TextBlob(str(text))
-        return 1 if obj.polarity >= 0 else 0
-
-    filepath = os.path.join(ROOT_DIR, "static/labeled_df.pickle")
-    if file_exists(filepath):
-        return read_pickled_dataframe(filepath)
-    else:
-        df['Sentiment'] = df['Review'].apply(return_sentiment)
-        pickle_dataframe(df, filepath)
-        print(f"\nWritten reviews to {filepath}!")
-        return df
 
 
 def clean_and_label(df):
