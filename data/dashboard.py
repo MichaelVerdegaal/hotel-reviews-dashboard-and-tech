@@ -1,3 +1,6 @@
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
 import plotly.graph_objects as go
 
 from config import MBTOKEN
@@ -36,3 +39,27 @@ def update_worldmap_settings(fig):
             zoom=3
         )
     )
+
+
+def create_dash_app(fig):
+    """
+    Create dashboard app object
+    :param fig: plotly map figure
+    :return: dash app
+    """
+    app = dash.Dash(__name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}])
+    app.layout = create_dash_layout(fig)
+    app.title = 'Hotel reviews sentiment analysis'
+    return app
+
+
+def create_dash_layout(fig):
+    """
+    Create the dashboard layout for a dash app
+    :param fig: plotly map figure
+    :return: layout
+    """
+    layout = html.Div([
+        dcc.Graph(figure=fig)
+    ])
+    return layout
