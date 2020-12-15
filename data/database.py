@@ -28,20 +28,66 @@ def df_to_db(db, dataframe):
         print(f"Database error: {e}")
 
 
-def query_all(db, count=0):
+def query_where_hotel(db, hotel_name):
     """
-    Queries all records from the database, optionally limiting results count
-    Ref: https://stackoverflow.com/a/16255680/7174982
+    Queries all records from the database from a specific hotel
     :param db: database object
-    :param count: amount of results to return, if not provided returns all results
+    :param hotel_name: name of hotel to select from
     :return: dataframe
     """
     collection = db["collection"]
-    query = {}
-    if count > 0:
-        cursor = collection.find(query, limit=count)
-    else:
-        cursor = collection.find(query)
+    pipeline = [
+        {
+            u"$match": {
+                u"Hotel_Name": hotel_name
+            }
+        }
+    ]
+    cursor = collection.aggregate(
+        pipeline,
+        allowDiskUse=True
+    )
+    # Ref: https://stackoverflow.com/a/16255680/7174982
     dataframe = pd.DataFrame(list(cursor))
-    del dataframe['_id']
+    return dataframe
+
+
+def query_hotels(db):
+    """
+    Queries all hotels from the database
+    Ref: https://stackoverflow.com/a/16255680/7174982
+    :param db: database object
+    :return: dataframe
+    """
+    collection = db["collection"]
+    pipeline = [
+        {
+            u"$group": {
+                u"_id": u"$Hotel_Name",
+                u"user": {
+                    u"$first": u"$$ROOT"
+                },
+                u"count": {
+                    u"$sum": 1.0
+                }
+            }
+        },
+        {
+            u"$replaceRoot": {
+                u"newRoot": {
+                    u"$mergeObjects": [
+                        {
+                            u"count": u"$count"
+                        },
+                        u"$user"
+                    ]
+                }
+            }
+        }
+    ]
+    cursor = collection.aggregate(
+        pipeline,
+        allowDiskUse=True
+    )
+    dataframe = pd.DataFrame(list(cursor))
     return dataframe
