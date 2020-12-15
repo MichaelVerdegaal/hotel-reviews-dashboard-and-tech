@@ -2,15 +2,11 @@ import os
 import re
 
 import nltk
+import numpy as np
 import pandas as pd
 
 from config import ROOT_DIR
 from data.file_util import file_exists, read_pickled_dataframe, pickle_dataframe
-
-print("\nDownloading nltk libraries...")
-nltk.download('stopwords')
-nltk.download('wordnet')
-lst_stopwords = nltk.corpus.stopwords.words("english")
 
 
 def pre_process_text(text):
@@ -19,7 +15,12 @@ def pre_process_text(text):
     :param text: string
     :return: cleaned string
     """
-    # Cconvert to lowercase, remove punctuations and unneeded characters, then strip
+    print("\nDownloading nltk libraries...")
+    nltk.download('stopwords')
+    nltk.download('wordnet')
+    lst_stopwords = nltk.corpus.stopwords.words("english")
+
+    # Convert to lowercase, remove punctuations and unneeded characters, then strip
     text = re.sub(r'[^\w\s]', '', str(text).lower().strip())
 
     # Tokenize
@@ -91,3 +92,13 @@ def clean_and_label(df):
         print(f"\nWritten reviews to {filepath}!")
         pickle_dataframe(new_df, filepath)
         return new_df
+
+
+def create_marker_label_data(df):
+    """
+    Modifies data for the customdata parameter of a plotly figure (for the hover labels) so it is in the correct format
+    :param df: dataframe
+    :return: label data
+    """
+    label_data = np.stack((df['Hotel_Name'], df['count']), axis=-1)
+    return label_data

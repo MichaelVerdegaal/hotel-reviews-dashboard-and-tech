@@ -5,35 +5,20 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import numpy as np
-import plotly.graph_objects as go
 
-from config import MBTOKEN
+from data.dashboard import create_worldmap, update_worldmap_settings
 from data.database import *
+from data.dataframes import create_marker_label_data
 
 # Data
 db = create_connection()
 df = query_hotels(db)
 
 # Worldmap
-fig = go.Figure(go.Scattermapbox(
-    lat=df['lat'],
-    lon=df['lng'],
-    mode='markers',
-    marker=go.scattermapbox.Marker(
-        size=14
-    ),
-    customdata=np.stack((df['Hotel_Name'], df['count']), axis=-1),
-    hovertemplate='<extra></extra><em>%{customdata[0]}  </em><br>',
-))
+customdata = create_marker_label_data(df)
+fig = create_worldmap(df['lat'], df['lng'], customdata)
+update_worldmap_settings(fig)
 
-fig.update_layout(
-    mapbox=dict(
-        accesstoken=MBTOKEN,
-        center=go.layout.mapbox.Center(lat=50, lon=0),
-        zoom=3
-    )
-)
 
 # Dash app
 app = dash.Dash(__name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}])
