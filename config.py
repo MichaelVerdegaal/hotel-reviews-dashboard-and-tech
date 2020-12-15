@@ -11,3 +11,6 @@ YOUR_REVIEWS = "static/enter_your_reviews.xlsx"
 HOST = "localhost"
 DATABASE_NAME = "reviews"
 PORT = 27017
+
+# Mapbox access token
+MBTOKEN = os.environ.get('MBTOKEN')
