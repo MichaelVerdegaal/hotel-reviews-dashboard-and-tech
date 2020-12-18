@@ -5,3 +5,12 @@
     left: 0;
     width: 100%;
 }
+
+.marker {
+  background-image: url('https://cdn.discordapp.com/attachments/697855611643232394/789492042455187496/727598.svg');
+  background-size: cover;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+}

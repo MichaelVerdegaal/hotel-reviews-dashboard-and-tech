@@ -3,16 +3,14 @@
 ###
 from config import MBTOKEN
 from data.database import *
-from data.dataframes import create_marker_label_data
 from flask import Flask, render_template, abort
 from jinja2 import TemplateNotFound
 
 # Data
 db = create_connection()
 all_hotels = query_hotels(db)
+all_hotels = all_hotels.to_json(orient='records', default_handler=str)
 
-# Map data
-customdata = create_marker_label_data(all_hotels)
 
 # Flask
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -21,7 +19,7 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 @app.route('/')
 def homepage():
     try:
-        return render_template('homepage.html', token=MBTOKEN)
+        return render_template('homepage.html', token=MBTOKEN, hotels=all_hotels)
     except TemplateNotFound:
         abort(404)
 

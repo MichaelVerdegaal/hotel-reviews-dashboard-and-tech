@@ -92,13 +92,3 @@ def clean_and_label(df):
         print(f"\nWritten reviews to {filepath}!")
         pickle_dataframe(new_df, filepath)
         return new_df
-
-
-def create_marker_label_data(df):
-    """
-    Modifies data for the customdata parameter of a plotly figure (for the hover labels) so it is in the correct format
-    :param df: dataframe
-    :return: label data
-    """
-    label_data = np.stack((df['Hotel_Name'], df['count']), axis=-1)
-    return label_data
