@@ -5,12 +5,13 @@ from config import MBTOKEN
 from data.database import *
 from flask import Flask, render_template, abort
 from jinja2 import TemplateNotFound
+from data.dataframes import df_to_geojson, read_geojson
 
 # Data
 db = create_connection()
 all_hotels = query_hotels(db)
-all_hotels = all_hotels.to_json(orient='records', default_handler=str)
-
+df_to_geojson(all_hotels)
+geojson = read_geojson()
 
 # Flask
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -19,10 +20,10 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 @app.route('/')
 def homepage():
     try:
-        return render_template('homepage.html', token=MBTOKEN, hotels=all_hotels)
+        return render_template('homepage.html', token=MBTOKEN, hotels=geojson)
     except TemplateNotFound:
         abort(404)
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=656565)
+    app.run(debug=True, port=1205)

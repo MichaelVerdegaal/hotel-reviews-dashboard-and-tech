@@ -40,13 +40,49 @@
     let hotels = {{ hotels | safe }};
     console.log(hotels);
 
-    for (let hotel of hotels) {
-        let markerContainer = document.createElement('div')
-        markerContainer.className = 'marker';
-        let marker = new mapboxgl.Marker(markerContainer).setLngLat([hotel.lng, hotel.lat]);
-        marker.addTo(map);
-    }
+    map.on('load', function () {
+        // Add an image to use as a custom marker
+        map.loadImage(
+            'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+            function (error, image) {
+                if (error) throw error;
+                // Add symbol image (currently mapbox default)
+                map.addImage('custom-marker', image);
+                // Add data source
+                map.addSource('points', {
+                    'type': 'geojson',
+                    'data': hotels,
+                });
+
+                // Add a symbol for each point
+                map.addLayer({
+                    'id': 'symbols',
+                    'type': 'symbol',
+                    'source': 'points',
+                    'layout': {
+                        'icon-image': 'custom-marker'
+                    }
+                });
+            }
+        );
+
+        // Center the map on clicked symbol
+        map.on('click', 'symbols', function (e) {
+            map.flyTo({
+                center: e.features[0].geometry.coordinates
+            });
+        });
+
+        // Change the cursor to a pointer when hovering symbol
+        map.on('mouseenter', 'symbols', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Revert cursor style when not hovering symbol anymore
+        map.on('mouseleave', 'symbols', function () {
+            map.getCanvas().style.cursor = '';
+        });
+    });
 
 </script>
-
 </html>

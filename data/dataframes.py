@@ -1,8 +1,9 @@
+import json
 import os
 import re
 
+import geojson
 import nltk
-import numpy as np
 import pandas as pd
 
 from config import ROOT_DIR
@@ -92,3 +93,37 @@ def clean_and_label(df):
         print(f"\nWritten reviews to {filepath}!")
         pickle_dataframe(new_df, filepath)
         return new_df
+
+
+def df_to_geojson(df):
+    """
+    Writes a dataframe to geojson.
+    :param df: dataframe of distinct hotels
+    """
+    filepath = os.path.join(ROOT_DIR, "static/all_hotels.geojson")
+    if file_exists(filepath):
+        pass
+    else:
+        def append_feature(x):
+            feature = geojson.Feature(geometry=geojson.Point((x["lng"],
+                                                              x["lat"]),
+                                                             properties={'count': x["count"],
+                                                                         '_id': str(x["_id"]),
+                                                                         'Hotel_Address': x['Hotel_Address'],
+                                                                         'Average_Score': x['Average_Score'],
+                                                                         'Hotel_Name': x['Hotel_Name']}))
+            features.append(feature)
+
+        features = []
+        df.apply(append_feature, axis=1)
+        feature_collection = geojson.FeatureCollection(features)
+
+        with open(filepath, 'w', encoding='utf8') as f:
+            geojson.dump(feature_collection, f, sort_keys=True, ensure_ascii=False)
+
+
+def read_geojson():
+    filepath = os.path.join(ROOT_DIR, "static/all_hotels.geojson")
+    if file_exists(filepath):
+        with open(filepath) as f:
+            return json.load(f)
