@@ -147,9 +147,14 @@
         });
         map.on('mouseenter', 'unclustered-point', function (e) {
             map.getCanvas().style.cursor = 'pointer';
+            let features = e.features[0]
+            let props = features.properties
 
-            let coordinates = e.features[0].geometry.coordinates.slice();
-            let description = e.features[0].properties.Hotel_Name;
+            let coordinates = features.geometry.coordinates.slice();
+            let description = `<h6>${props.Hotel_Name}</h6><p>
+                                📍 Address: ${props.Hotel_Address}<br>
+                                7️⃣ Average score: ${props.Average_Score}<br>
+                                💬 Reviews: ${props.count}</p>`
 
             // Ensure that if the map is zoomed out such that multiple
             // copies are visible, the popup moves to the copy
