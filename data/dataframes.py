@@ -106,12 +106,12 @@ def df_to_geojson(df):
     else:
         def append_feature(x):
             feature = geojson.Feature(geometry=geojson.Point((x["lng"],
-                                                              x["lat"]),
-                                                             properties={'count': x["count"],
-                                                                         '_id': str(x["_id"]),
-                                                                         'Hotel_Address': x['Hotel_Address'],
-                                                                         'Average_Score': x['Average_Score'],
-                                                                         'Hotel_Name': x['Hotel_Name']}))
+                                                              x["lat"])),
+                                      properties={'count': x["count"],
+                                                  '_id': str(x["_id"]),
+                                                  'Hotel_Address': x['Hotel_Address'],
+                                                  'Average_Score': x['Average_Score'],
+                                                  'Hotel_Name': x['Hotel_Name']})
             features.append(feature)
 
         features = []
