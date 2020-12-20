@@ -123,6 +123,10 @@ def df_to_geojson(df):
 
 
 def read_geojson():
+    """
+    Reads geojson hotel data from file
+    :return: geojson as json
+    """
     filepath = os.path.join(ROOT_DIR, "static/all_hotels.geojson")
     if file_exists(filepath):
         with open(filepath) as f:

@@ -25,5 +25,12 @@ def homepage():
         abort(404)
 
 
+@app.route('/hotel/<string:hotel_name>')
+def ajax_hotel(hotel_name):
+    reviews = query_where_hotel(db, hotel_name)
+    review_json = reviews.to_json(orient='records', default_handler=str)
+    return review_json
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=1205)

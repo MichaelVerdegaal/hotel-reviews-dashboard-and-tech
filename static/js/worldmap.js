@@ -107,11 +107,11 @@ function createMap(hotels) {
                 'center': features.geometry.coordinates,
                 'zoom': 18,
                 'pitch': 70,
-                'offset': [200, 0]
+                'offset': [400, 0]
             });
 
             fillHotelModal(features.properties);
-            $('#left_modal').modal();
+            $('#left_modal_lg').modal();
         });
 
         // Change the cursor to a pointer and show popup when hovering symbol
@@ -152,17 +152,49 @@ function createMap(hotels) {
 
 function fillHotelModal(props) {
     let modal_content = document.getElementById("modal-body");
-    let modal_title = document.getElementById("modal-title");
     modal_content.innerHTML = '';
 
+    // Score badge next to modal title
     let score = props.Average_Score;
     let scoreBadgeContext = "";
-
     if (score >= 7) {
         scoreBadgeContext = "badge badge-success badge-secondary";
     } else {
         scoreBadgeContext = "badge badge-danger badge-secondary"
     }
     let scoreBadge = `<span class="${scoreBadgeContext}">${score}</span>`;
+
+    // Modal title
+    let modal_title = document.getElementById("modal-title");
     modal_title.innerHTML = props.Hotel_Name + scoreBadge;
+
+    // Review table
+    let tableContainer = document.createElement("div");
+    tableContainer.className = "container-fluid";
+    tableContainer.id = "table-container";
+
+    let reviewTable = document.createElement("table");
+    reviewTable.className = "table table-striped table-hover";
+    reviewTable.id = "review-table";
+
+    tableContainer.appendChild(reviewTable);
+    tableContainer.appendChild(document.createElement("th"));
+    modal_content.appendChild(tableContainer);
+
+    let endpoint = `/hotel/${props.Hotel_Name}`;
+    $("#review-table").DataTable({
+        ajax: {
+            url: endpoint,
+            dataType: "json",
+            dataSrc: "",
+            contentType: "application/json; charset=utf-8",
+        },
+        columns: [
+            {'title': 'Date', 'data': 'Review_Date'},
+            {'title': 'Review', 'data': 'Review'},
+            {'title': 'Country', 'data': 'Reviewer_Nationality'},
+            {'title': 'Score', 'data': 'Reviewer_Score'},
+            {'title': 'Sentiment', 'data': 'Sentiment'},
+        ],
+    });
 }
