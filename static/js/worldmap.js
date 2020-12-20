@@ -152,8 +152,17 @@ function createMap(hotels) {
 
 function fillHotelModal(props) {
     let modal_content = document.getElementById("modal-body");
+    let modal_title = document.getElementById("modal-title");
     modal_content.innerHTML = '';
 
-    let modal_title = document.getElementById("modal-title");
-    modal_title.textContent = props.Hotel_Name;
+    let score = props.Average_Score;
+    let scoreBadgeContext = "";
+
+    if (score >= 7) {
+        scoreBadgeContext = "badge badge-success badge-secondary";
+    } else {
+        scoreBadgeContext = "badge badge-danger badge-secondary"
+    }
+    let scoreBadge = `<span class="${scoreBadgeContext}">${score}</span>`;
+    modal_title.innerHTML = props.Hotel_Name + scoreBadge;
 }
