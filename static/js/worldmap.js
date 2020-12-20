@@ -99,13 +99,19 @@ function createMap(hotels) {
             }
         );
 
-        // Center the map on clicked symbol
+        // Center the map on clicked symbol, and show modal
         map.on('click', 'unclustered-point', function (e) {
+            let features = e.features[0];
+
             map.flyTo({
-                'center': e.features[0].geometry.coordinates,
+                'center': features.geometry.coordinates,
                 'zoom': 18,
-                'pitch': 70
+                'pitch': 70,
+                'offset': [200, 0]
             });
+
+            fillHotelModal(features.properties);
+            $('#left_modal').modal();
         });
 
         // Change the cursor to a pointer and show popup when hovering symbol
@@ -142,4 +148,12 @@ function createMap(hotels) {
             popup.remove();
         });
     });
+}
+
+function fillHotelModal(props) {
+    let modal_content = document.getElementById("modal-body");
+    modal_content.innerHTML = '';
+
+    let modal_title = document.getElementById("modal-title");
+    modal_title.textContent = props.Hotel_Name;
 }
