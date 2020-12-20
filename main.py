@@ -28,6 +28,7 @@ def homepage():
 @app.route('/hotel/<string:hotel_name>')
 def ajax_hotel(hotel_name):
     reviews = query_where_hotel(db, hotel_name)
+    reviews['Sentiment'] = reviews['Sentiment'].apply(lambda x: "Positive" if x == 1 else "Negative")
     review_json = reviews.to_json(orient='records', default_handler=str)
     return review_json
 

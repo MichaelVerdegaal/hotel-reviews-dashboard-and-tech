@@ -107,11 +107,11 @@ function createMap(hotels) {
                 'center': features.geometry.coordinates,
                 'zoom': 18,
                 'pitch': 70,
-                'offset': [400, 0]
+                'offset': [350, 0]
             });
 
             fillHotelModal(features.properties);
-            $('#left_modal_lg').modal();
+            $('#left_modal_xl').modal();
         });
 
         // Change the cursor to a pointer and show popup when hovering symbol
