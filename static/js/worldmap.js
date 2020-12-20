@@ -1,3 +1,39 @@
+class ResetMeControl {
+    insertControls() {
+        this.container = document.createElement('div');
+        this.container.classList.add('mapboxgl-ctrl');
+        this.container.classList.add('mapboxgl-ctrl-group');
+        this.container.classList.add('mapboxgl-ctrl-zoom');
+        this.ResetMe = document.createElement('button');
+        this.ResetMe.title = "Reset camera";
+        this.ResetMe.setAttribute('type', 'button');
+        this.ResetMe.style.backgroundImage = "url('https://upload.wikimedia.org/wikipedia/commons/f/f8/Ic_my_location_48px.svg')";
+        this.ResetMe.style.backgroundSize = "29px 29px";
+        this.ResetMe.style.backgroundRepeat = "no-repeat";
+        this.container.appendChild(this.ResetMe);
+    }
+
+    onAdd(map) {
+        this.map = map;
+        this.insertControls();
+        this.ResetMe.addEventListener('click', () => {
+            this.map.flyTo({
+                'center': [0, 50],
+                'zoom': 4,
+                'bearing': 0,
+                'pitch': 0,
+            });
+        });
+        return this.container;
+    }
+
+    onRemove() {
+        this.container.parentNode.removeChild(this.container);
+        this.map = undefined;
+    }
+}
+
+
 function createMap(hotels) {
     let map = new mapboxgl.Map({
         container: 'map-container', // div to attach map to
@@ -8,6 +44,8 @@ function createMap(hotels) {
 
     // Add map UI controls
     map.addControl(new mapboxgl.NavigationControl());
+    map.addControl(new ResetMeControl());
+
 
     // Add markers
     map.on('load', function () {
@@ -168,7 +206,7 @@ function fillHotelModal(props) {
     let modal_title = document.getElementById("modal-title");
     modal_title.innerHTML = props.Hotel_Name + scoreBadge;
 
-    // Review table
+    // Create review table
     let tableContainer = document.createElement("div");
     tableContainer.className = "container-fluid";
     tableContainer.id = "table-container";
@@ -181,6 +219,7 @@ function fillHotelModal(props) {
     tableContainer.appendChild(document.createElement("th"));
     modal_content.appendChild(tableContainer);
 
+    // Fill review table
     let endpoint = `/hotel/${props.Hotel_Name}`;
     $("#review-table").DataTable({
         ajax: {
