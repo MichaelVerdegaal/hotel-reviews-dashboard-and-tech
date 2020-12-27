@@ -128,15 +128,29 @@ function createMap(hotels) {
         });
 
         // Map filtering
-        function filterBy(count) {
-            map.setFilter('map-point', ['>=', ['get', 'count'], count]);
+        function filterBy(count, score) {
+            let filterCount = ['>=', ['get', 'count'], count];
+            let filterScore = ['>=', ['get', 'Average_Score'], score]
+            map.setFilter('map-point', ['all', filterCount, filterScore]);
             document.getElementById('count-lbl').textContent = count;
+            document.getElementById('review-lbl').textContent = score;
         }
-        filterBy(0);
+
+        // Set initial values of slider
+        filterBy(0, 0.0);
+
+        // Call filter update on slider change
         document.getElementById('count-slider').addEventListener('input', function (e) {
             let month = parseInt(e.target.value, 10);
-            filterBy(month);
+            let score = parseFloat(document.getElementById('review-lbl').innerText);
+            filterBy(month, score);
         });
+        document.getElementById('review-slider').addEventListener('input', function (e) {
+            let month = parseInt(document.getElementById('count-lbl').innerText, 10);
+            let score = parseFloat(e.target.value);
+            filterBy(month, score);
+        });
+
     });
 }
 
