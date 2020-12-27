@@ -126,6 +126,17 @@ function createMap(hotels) {
             map.getCanvas().style.cursor = '';
             popup.remove();
         });
+
+        // Map filtering
+        function filterBy(count) {
+            map.setFilter('map-point', ['>=', ['get', 'count'], count]);
+            document.getElementById('count-lbl').textContent = count;
+        }
+        filterBy(0);
+        document.getElementById('count-slider').addEventListener('input', function (e) {
+            let month = parseInt(e.target.value, 10);
+            filterBy(month);
+        });
     });
 }
 
