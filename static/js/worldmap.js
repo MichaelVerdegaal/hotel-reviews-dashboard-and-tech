@@ -60,85 +60,25 @@ function createMap(hotels) {
                 map.addSource('points', {
                     'type': 'geojson',
                     'data': hotels,
-                    'cluster': true,
-                    'clusterMaxZoom': 12, // Max zoom to cluster points on
-                    'clusterRadius': 50 // Radius of each cluster when clustering points (defaults to 50)
-                });
-
-                // Clustering reference: https://docs.mapbox.com/mapbox-gl-js/example/cluster/
-                map.addLayer({
-                    id: 'clusters',
-                    type: 'circle',
-                    source: 'points',
-                    filter: ['has', 'point_count'],
-                    paint: {
-                        // Uses step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                        // to implement three types of circles:
-                        'circle-color': [
-                            'step',
-                            ['get', 'point_count'],
-                            '#4ea9ee',
-                            50,
-                            '#9759f7',
-                            300,
-                            '#ea688c'
-                        ],
-                        'circle-radius': [
-                            'step',
-                            ['get', 'point_count'],
-                            20,
-                            50,
-                            30,
-                            300,
-                            40
-                        ]
-                    }
                 });
 
                 map.addLayer({
-                    id: 'cluster-count',
-                    type: 'symbol',
-                    source: 'points',
-                    filter: ['has', 'point_count'],
-                    layout: {
-                        'text-field': '{point_count_abbreviated}',
-                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                        'text-size': 12
-                    }
-                });
-
-                map.addLayer({
-                    id: 'unclustered-point',
+                    id: 'map-point',
                     type: 'symbol',
                     source: 'points',
                     layout: {
-                        'icon-image': 'custom-marker'
-                    },
-                    filter: ['!', ['has', 'point_count']],
-                });
-
-                // inspect a cluster on click
-                map.on('click', 'clusters', function (e) {
-                    let features = map.queryRenderedFeatures(e.point, {
-                        layers: ['clusters']
-                    });
-                    let clusterId = features[0].properties.cluster_id;
-                    map.getSource('points').getClusterExpansionZoom(
-                        clusterId,
-                        function (err, zoom) {
-                            if (err) return;
-                            map.easeTo({
-                                center: features[0].geometry.coordinates,
-                                zoom: zoom
-                            });
-                        }
-                    );
+                        'icon-image': 'custom-marker',
+                        'icon-allow-overlap': true,
+                        'icon-ignore-placement': true,
+                        'icon-padding': 0,
+                        'text-allow-overlap': true
+                    }
                 });
             }
         );
 
         // Center the map on clicked symbol, and show modal
-        map.on('click', 'unclustered-point', function (e) {
+        map.on('click', 'map-point', function (e) {
             let features = e.features[0];
 
             map.flyTo({
@@ -159,7 +99,8 @@ function createMap(hotels) {
             'closeOnClick': false,
             'offset': [0, -20]
         });
-        map.on('mouseenter', 'unclustered-point', function (e) {
+
+        map.on('mouseenter', 'map-point', function (e) {
             map.getCanvas().style.cursor = 'pointer';
             let features = e.features[0]
             let props = features.properties
@@ -181,7 +122,7 @@ function createMap(hotels) {
         });
 
         // Revert cursor style andd remove popup when not hovering symbol anymore
-        map.on('mouseleave', 'unclustered-point', function () {
+        map.on('mouseleave', 'map-point', function () {
             map.getCanvas().style.cursor = '';
             popup.remove();
         });
