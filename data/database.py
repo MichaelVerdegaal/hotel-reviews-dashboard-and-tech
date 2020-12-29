@@ -28,6 +28,23 @@ def df_to_db(db, dataframe):
         print(f"Database error: {e}")
 
 
+def query_all_limit(db, amount=0):
+    """
+    Queries all records from the database from a specific hotel
+    :param db: database object
+    :param amount: limit amount of results returned
+    :return: dataframe
+    """
+    collection = db["collection"]
+    if amount > 0:
+        cursor = collection.find({}, limit=amount)
+    else:
+        cursor = collection.find({})
+    # Ref: https://stackoverflow.com/a/16255680/7174982
+    dataframe = pd.DataFrame(list(cursor))
+    return dataframe
+
+
 def query_where_hotel(db, hotel_name):
     """
     Queries all records from the database from a specific hotel
@@ -47,7 +64,6 @@ def query_where_hotel(db, hotel_name):
         pipeline,
         allowDiskUse=True
     )
-    # Ref: https://stackoverflow.com/a/16255680/7174982
     dataframe = pd.DataFrame(list(cursor))
     return dataframe
 
