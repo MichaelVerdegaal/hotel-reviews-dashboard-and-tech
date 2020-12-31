@@ -1,11 +1,8 @@
 import os
 
-from tensorflow.keras import layers
-from tensorflow.keras.models import Sequential
-
 from config import ROOT_DIR
 from data.database import *
-from data.model_util import create_padded_sequences, split_train_test_np
+from data.model_util import create_padded_sequences, split_train_test_np, create_simple_rnn
 
 if __name__ == '__main__':
     # Config
@@ -26,13 +23,7 @@ if __name__ == '__main__':
     data_train, data_test, label_train, label_test = split_train_test_np(padded_sequences, labels)
 
     # Create model
-    model = Sequential()
-    model.add(layers.Embedding(max_words, 15, input_length=input_length))
-    model.add(layers.SimpleRNN(15))
-    model.add(layers.Dense(1, activation='sigmoid'))
-    model.compile(optimizer='rmsprop',
-                  loss='binary_crossentropy',
-                  metrics=['accuracy'])
+    model = create_simple_rnn(max_words, input_length)
 
     # Train model
     history = model.fit(data_train,

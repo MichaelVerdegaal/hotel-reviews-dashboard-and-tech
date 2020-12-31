@@ -1,7 +1,9 @@
+import numpy as np
 from sklearn.model_selection import train_test_split
+from tensorflow.keras import layers
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
-import numpy as np
 
 
 def create_padded_sequences(max_words, input_length, data):
@@ -33,3 +35,20 @@ def split_train_test_np(padded_sequences, labels):
     label_train = np.asarray(label_train)
     label_test = np.asarray(label_test)
     return data_train, data_test, label_train, label_test
+
+
+def create_simple_rnn(max_words, input_length):
+    """
+    Create a basic recurrent neural network
+    :param max_words: size of the vocabulary
+    :param input_length: length of input sequences
+    :return: Keras RNN
+    """
+    model = Sequential()
+    model.add(layers.Embedding(max_words, 15, input_length=input_length))
+    model.add(layers.SimpleRNN(15))
+    model.add(layers.Dense(1, activation='sigmoid'))
+    model.compile(optimizer='rmsprop',
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
+    return model
