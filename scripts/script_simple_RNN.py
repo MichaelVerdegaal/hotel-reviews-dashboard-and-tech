@@ -1,38 +1,29 @@
 import os
 
-import numpy as np
-from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.preprocessing.text import Tokenizer
 
 from config import ROOT_DIR
 from data.database import *
+from data.model_util import create_padded_sequences, split_train_test_np
 
 if __name__ == '__main__':
+    # Config
+    data_size = 5000
     max_words = 5000
     input_length = 200
 
     # Prepare dataset
     db = create_connection()
-    all_hotels = query_all_limit(db)
-    all_hotels_filtered = all_hotels[['Review', 'Sentiment']]
-    data = list(all_hotels_filtered['Review'].values)
-    labels = list(all_hotels_filtered['Sentiment'].values)
+    all_hotels = query_all_limit(db, data_size)[['Review', 'Sentiment']]
+    data = list(all_hotels['Review'].values)  # We want a list instead of a series object since it's easier to work with
+    labels = list(all_hotels['Sentiment'].values)
 
     # Text encoding and padding
-    tokenizer = Tokenizer(num_words=max_words)
-    tokenizer.fit_on_texts(data)
-    sequences = tokenizer.texts_to_sequences(data)
-    padded_sequences = pad_sequences(sequences, maxlen=input_length)
+    padded_sequences = create_padded_sequences(max_words, input_length, data)
 
     # Split data
-    data_train, data_test, label_train, label_test = train_test_split(padded_sequences, labels, random_state=5)
-    data_train = np.asarray(data_train)
-    data_test = np.asarray(data_test)
-    label_train = np.asarray(label_train)
-    label_test = np.asarray(label_test)
+    data_train, data_test, label_train, label_test = split_train_test_np(padded_sequences, labels)
 
     # Create model
     model = Sequential()
