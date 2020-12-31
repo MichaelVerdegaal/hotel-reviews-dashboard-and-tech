@@ -1,9 +1,33 @@
+import os
+
 import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
+from config import ROOT_DIR
+
+
+def save_model(model, filename):
+    """
+    Saves a keras model as a file
+    :param model: keras model
+    :param filename: filename to save it at
+    """
+    filepath = os.path.join(ROOT_DIR, f"static/{filename}")
+    model.save(filepath)
+
+
+def read_model(filename):
+    """
+    Reads a keras model from fiel
+    :param filename: filename to read from
+    :return: keras model
+    """
+    filepath = os.path.join(ROOT_DIR, f"static/{filename}")
+    model = load_model(filepath)
+    return model
 
 
 def create_padded_sequences(max_words, input_length, data):
@@ -44,11 +68,11 @@ def create_simple_rnn(max_words, input_length):
     :param input_length: length of input sequences
     :return: Keras RNN
     """
-    model = Sequential()
-    model.add(layers.Embedding(max_words, 15, input_length=input_length))
-    model.add(layers.SimpleRNN(15))
-    model.add(layers.Dense(1, activation='sigmoid'))
-    model.compile(optimizer='rmsprop',
-                  loss='binary_crossentropy',
-                  metrics=['accuracy'])
-    return model
+    simple_RNN = Sequential()
+    simple_RNN.add(layers.Embedding(max_words, 15, input_length=input_length))
+    simple_RNN.add(layers.SimpleRNN(15))
+    simple_RNN.add(layers.Dense(1, activation='sigmoid'))
+    simple_RNN.compile(optimizer='rmsprop',
+                       loss='binary_crossentropy',
+                       metrics=['accuracy'])
+    return simple_RNN
