@@ -130,3 +130,7 @@ dmypy.json
 # Ignore large files
 kaggle_reviews.csv
 *.pickle
+
+# Ignore saved files that can pile up massively
+logs/
+models/

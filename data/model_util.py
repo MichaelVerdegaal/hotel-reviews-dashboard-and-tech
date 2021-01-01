@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 from config import ROOT_DIR
 from data.file_util import pickle_object, read_pickled_object
-
+from tensorflow.keras.metrics import Accuracy, Precision, Recall, AUC
 
 def save_model(model, filename):
     """
@@ -16,7 +16,7 @@ def save_model(model, filename):
     :param model: keras model
     :param filename: filename to save it at
     """
-    filepath = os.path.join(ROOT_DIR, f"static/{filename}")
+    filepath = os.path.join(ROOT_DIR, f"static/models/{filename}")
     model.save(filepath, overwrite=True)
 
 
@@ -82,5 +82,5 @@ def create_simple_rnn(max_words, input_length):
     simple_RNN.add(layers.Dense(1, activation='sigmoid'))
     simple_RNN.compile(optimizer='rmsprop',
                        loss='binary_crossentropy',
-                       metrics=['accuracy'])
+                       metrics=['accuracy', Precision(), Recall(), AUC()])
     return simple_RNN
