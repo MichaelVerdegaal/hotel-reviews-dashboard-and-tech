@@ -6,7 +6,7 @@ if __name__ == '__main__':
     data_size = 0
     max_words = 5000
     input_length = 200
-    batch_size = 2500
+    batch_size = 1000
     epochs = 3
 
     # Prepare dataset

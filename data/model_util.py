@@ -46,7 +46,7 @@ def create_padded_sequences(data, max_words=5000, input_length=200, replace_toke
         tokenizer.fit_on_texts(data)
         pickle_object(tokenizer, filepath)
     else:
-        print("Reading tokenizer from file.")
+        print("Reading tokenizer from file...\n")
         tokenizer = read_pickled_object(filepath)
     sequences = tokenizer.texts_to_sequences(data)
     padded_sequences = pad_sequences(sequences, maxlen=input_length)
