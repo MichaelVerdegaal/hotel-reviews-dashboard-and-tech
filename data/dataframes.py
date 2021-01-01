@@ -16,9 +16,8 @@ def pre_process_text(text):
     :param text: string
     :return: cleaned string
     """
-    print("\nDownloading nltk libraries...")
-    nltk.download('stopwords')
-    nltk.download('wordnet')
+    nltk.download('stopwords', quiet=True)
+    nltk.download('wordnet', quiet=True)
     lst_stopwords = nltk.corpus.stopwords.words("english")
 
     # Convert to lowercase, remove punctuations and unneeded characters, then strip
@@ -93,6 +92,17 @@ def clean_and_label(df):
         print(f"\nWritten reviews to {filepath}!")
         pickle_dataframe(new_df, filepath)
         return new_df
+
+
+def clean_manual_review(reviews):
+    """
+    Clean a list of strings and enter them into a dataframe. Meant for manual predictions of reviews
+    :param reviews: list of strings
+    :return: Dataframe with cleaned strings
+    """
+    new_df = pd.DataFrame(reviews, columns=['Review'])
+    new_df['Review'] = new_df['Review'].apply(pre_process_text)
+    return new_df
 
 
 def df_to_geojson(df):

@@ -7,6 +7,7 @@ from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 from config import ROOT_DIR
+from data.file_util import pickle_object, read_pickled_object
 
 
 def save_model(model, filename):
@@ -16,7 +17,7 @@ def save_model(model, filename):
     :param filename: filename to save it at
     """
     filepath = os.path.join(ROOT_DIR, f"static/{filename}")
-    model.save(filepath)
+    model.save(filepath, overwrite=True)
 
 
 def read_model(filename):
@@ -30,16 +31,23 @@ def read_model(filename):
     return model
 
 
-def create_padded_sequences(max_words, input_length, data):
+def create_padded_sequences(data, max_words=5000, input_length=200, replace_tokenizer=True):
     """
     Encode a list of strings into number sequences, padded with zeros to always be a consistent length
+    :param data: list of strings
     :param max_words: Maximum amount of words that the tokenizer can store
     :param input_length: How long the sequences should be
-    :param data: list of strings
+    :param replace_tokenizer: Whether to construct a new tokenizer or to read an already saved one
     :return: padded sequences
     """
-    tokenizer = Tokenizer(num_words=max_words)
-    tokenizer.fit_on_texts(data)
+    filepath = os.path.join(ROOT_DIR, f"static/tokenizer.pickle")
+    if replace_tokenizer:
+        tokenizer = Tokenizer(num_words=max_words)
+        tokenizer.fit_on_texts(data)
+        pickle_object(tokenizer, filepath)
+    else:
+        print("Reading tokenizer from file.")
+        tokenizer = read_pickled_object(filepath)
     sequences = tokenizer.texts_to_sequences(data)
     padded_sequences = pad_sequences(sequences, maxlen=input_length)
     return padded_sequences
