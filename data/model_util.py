@@ -1,5 +1,7 @@
 import os
 
+# noinspection PyUnresolvedReferences
+import comet_ml
 import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
@@ -8,7 +10,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 from config import ROOT_DIR
 from data.file_util import pickle_object, read_pickled_object
-from tensorflow.keras.metrics import Accuracy, Precision, Recall, AUC
+from tensorflow.keras.metrics import Precision, Recall, AUC
+
 
 def save_model(model, filename):
     """

@@ -1,17 +1,24 @@
 import datetime
 
-import tensorflow as tf
-
+from comet_ml import Experiment
 from data.database import create_connection, query_all_limit
 from data.model_util import *
 
 if __name__ == '__main__':
+    # comet.ml config
+    experiment = Experiment(
+        project_name="Hotel Neural Network",
+        auto_metric_logging=True,
+        auto_param_logging=True,
+        auto_histogram_weight_logging=True,
+        auto_histogram_gradient_logging=True,
+        auto_histogram_activation_logging=True,
+    )
     # Config
-    log_dir = os.path.join(ROOT_DIR, "static/logs/" + datetime.datetime.now().strftime("%Y%m%d-%H%M"))
     data_size = 0
     max_words = 5000
     input_length = 200
-    batch_size = 10000
+    batch_size = 20000
     epochs = 2
 
     # Prepare dataset
@@ -30,12 +37,10 @@ if __name__ == '__main__':
     simple_RNN = create_simple_rnn(max_words, input_length)
 
     # Train model
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, update_freq='batch', histogram_freq=1)
     history = simple_RNN.fit(data_train,
                              label_train,
                              epochs=epochs,
                              batch_size=batch_size,
-                             validation_data=(data_test, label_test),
-                             callbacks=[tensorboard_callback])
+                             validation_data=(data_test, label_test))
     save_model(simple_RNN, f"simple_RNN_{datetime.datetime.now().strftime('%Y%m%d-%H%M')}.h5")
     print(simple_RNN.summary())
