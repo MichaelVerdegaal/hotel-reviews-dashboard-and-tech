@@ -2,12 +2,16 @@ import os
 
 # noinspection PyUnresolvedReferences
 import comet_ml
+import numpy
 import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.python.keras.callbacks import Callback
+from tensorflow.python.keras.utils.np_utils import to_categorical
+
 from config import ROOT_DIR
 from data.file_util import pickle_object, read_pickled_object
 from tensorflow.keras.metrics import Precision, Recall, AUC
@@ -87,3 +91,28 @@ def create_simple_rnn(max_words, input_length):
                        loss='binary_crossentropy',
                        metrics=['accuracy', Precision(), Recall(), AUC()])
     return simple_RNN
+
+
+class ConfusionMatrixCallback(Callback):
+    """
+    comet.ml callback for keras, to create a confusion matrix per epoch
+    Reference: https://www.comet.ml/site/debugging-classifiers-with-confusion-matrices/
+    """
+    def __init__(self, experiment, inputs, targets, cutoff=0.5):
+        self.experiment = experiment
+        self.inputs = inputs
+        self.cutoff = cutoff
+        self.targets = targets
+        self.targets_reshaped = to_categorical(self.targets)
+
+    def on_epoch_end(self, epoch, logs={}):
+        predicted = self.model.predict(self.inputs)
+        predicted = np.where(predicted < self.cutoff, 0, 1)
+
+        predicted_reshaped = to_categorical(predicted)
+        self.experiment.log_confusion_matrix(
+            self.targets_reshaped,
+            predicted_reshaped,
+            title="Confusion Matrix, Epoch #%d" % (epoch + 1),
+            file_name="confusion-matrix-%03d.json" % (epoch + 1),
+        )
