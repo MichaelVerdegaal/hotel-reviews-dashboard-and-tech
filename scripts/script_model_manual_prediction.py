@@ -11,7 +11,9 @@ if __name__ == '__main__':
     then just run the file.
     """
     print("Loading model...\n")
-    model = read_model("simple_RNN.h5")
+    model = read_model("models/simple_RNN_20210104-1540.h5")
+    print(model.summary())
+
     review_list = [
         'No hot water, leaking air conditioning, drip drip all night',
         "Was woken up by a random man persistently knocking on the door at 3am! Check-in took a long time, even though there wasn't a large queue. Long queues for the lifts",
@@ -20,7 +22,7 @@ if __name__ == '__main__':
         'The only fault was that after our stay we fancied a little shop around Leeds and at check out we asked to leave our cases for an hour or two, the lady behind the desk decided not to let us keep them there as ‘people will be bringing cases soon before they check in, and it will get too full’. It wasn’t said in a polite way and it felt like as soon as we checked out we were ditched and the staff could be no longer helpful or accommodating. I think when your charging £109 a night then you can hold two small cases for at least an hour. We then dragged our cases round the shops irritating other shoppers as we went around. This is our second stay at the hotel we recommended all our family and friends but now we’re not sure we want to come back.'
     ]
 
-    print("Processing input...\n")
+    print("\n\nProcessing input...\n")
     processed_reviews = clean_manual_review(review_list)
     data = list(processed_reviews['Review'].values)
     padded_sequences = create_padded_sequences(data=data, replace_tokenizer=False)

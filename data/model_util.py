@@ -2,7 +2,6 @@ import os
 
 # noinspection PyUnresolvedReferences
 import comet_ml
-import numpy
 import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
@@ -14,8 +13,8 @@ from tensorflow.python.keras.utils.np_utils import to_categorical
 
 from config import ROOT_DIR
 from data.file_util import pickle_object, read_pickled_object
-from tensorflow.keras.metrics import Precision, Recall, AUC
-
+from tensorflow.keras.metrics import Precision, Recall
+from tensorflow_addons.metrics import F1Score
 
 def save_model(model, filename):
     """
@@ -76,20 +75,21 @@ def split_train_test_np(padded_sequences, labels):
     return data_train, data_test, label_train, label_test
 
 
-def create_simple_rnn(max_words, input_length):
+def create_simple_rnn(max_words, output_dim, input_length):
     """
     Create a basic recurrent neural network
     :param max_words: size of the vocabulary
     :param input_length: length of input sequences
+    :param output_dim: dimension size of the output
     :return: Keras RNN
     """
     simple_RNN = Sequential()
-    simple_RNN.add(layers.Embedding(max_words, 15, input_length=input_length))
-    simple_RNN.add(layers.SimpleRNN(15))
+    simple_RNN.add(layers.Embedding(max_words, output_dim, input_length=input_length))
+    simple_RNN.add(layers.SimpleRNN(output_dim))
     simple_RNN.add(layers.Dense(1, activation='sigmoid'))
     simple_RNN.compile(optimizer='rmsprop',
                        loss='binary_crossentropy',
-                       metrics=['accuracy', Precision(), Recall(), AUC()])
+                       metrics=['accuracy', Precision(), Recall(), F1Score(num_classes=1, average='micro')])
     return simple_RNN
 
 
