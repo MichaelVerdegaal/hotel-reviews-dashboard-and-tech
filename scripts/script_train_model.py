@@ -3,9 +3,13 @@ import datetime
 from comet_ml import Experiment
 from data.database import create_connection, query_all_limit
 from data.model_util import *
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 if __name__ == '__main__':
+    """
+    This is the general script used to train our Recurrent Neural Networks. To use, make sure you've set your comet.ml
+    API key as an environment variable. Lastly, tweak the config variables to your liking, and run the file.
+    """
     # comet.ml config
     experiment = Experiment(
         project_name="Hotel Neural Network",
@@ -17,14 +21,30 @@ if __name__ == '__main__':
         auto_histogram_gradient_logging=True,
         auto_histogram_activation_logging=True,
     )
-    # Config
-    timestamp = datetime.datetime.now().strftime('%Y%m%d-%H%M')
+
+    # General config
+    timestamp = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M')
+    checkpoint_filepath = os.path.join(ROOT_DIR, (f'static/models/{timestamp}/' +
+                                                  'Epoch-{epoch:02d}_ValLoss-{val_loss:.4f}.h5'))
+    # Set seed for reproducible results, necessary due to our use case
+    seed_value = 1
+    os.environ['PYTHONHASHSEED'] = str(seed_value)
+    import random
+    import numpy as np
+    import tensorflow as tf
+    random.seed(seed_value)
+    np.random.seed(seed_value)
+    tf.random.set_seed(seed_value)
+
+    # Model config
     data_size = 0
     max_words = 5000
     out_put_dim = 15
     input_length = 200
-    batch_size = 2500
-    epochs = 20
+    batch_size = 10000
+    epochs = 50
+
+
 
     # Prepare dataset
     db = create_connection()
@@ -42,9 +62,16 @@ if __name__ == '__main__':
     # Create model
     simple_RNN = create_simple_rnn(max_words, out_put_dim, input_length)
 
-    # First prediction before training
-    print("Doing first prediction rounds...")
-    confmat = ConfusionMatrixCallback(experiment, data_test, label_test)
+    # Callbacks
+    callbacks = [EarlyStopping(monitor='val_loss', mode='min', patience=5, verbose=1),
+                 ModelCheckpoint(filepath=checkpoint_filepath,
+                                 monitor='val_loss',
+                                 save_best_only=True,
+                                 mode='min',
+                                 save_freq='epoch',
+                                 verbose=1)]
+    # disable confusion matrix callback if not needed, as it slows down performance a lot
+    # callbacks.append(ConfusionMatrixCallback(experiment, data_test, label_test))
 
     # Train model
     history = simple_RNN.fit(data_train,
@@ -52,9 +79,4 @@ if __name__ == '__main__':
                              epochs=epochs,
                              batch_size=batch_size,
                              validation_data=(data_test, label_test),
-                             callbacks=[confmat,
-                                        EarlyStopping(monitor='val_loss',
-                                                      mode='min',
-                                                      patience=3,
-                                                      verbose=1)])
-    save_model(simple_RNN, f"simple_RNN_{timestamp}.h5")
+                             callbacks=callbacks)

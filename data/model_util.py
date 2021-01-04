@@ -13,8 +13,9 @@ from tensorflow.python.keras.utils.np_utils import to_categorical
 
 from config import ROOT_DIR
 from data.file_util import pickle_object, read_pickled_object
-from tensorflow.keras.metrics import Precision, Recall
+from tensorflow.keras.metrics import Precision, Recall, AUC
 from tensorflow_addons.metrics import F1Score
+
 
 def save_model(model, filename):
     """
@@ -89,7 +90,7 @@ def create_simple_rnn(max_words, output_dim, input_length):
     simple_RNN.add(layers.Dense(1, activation='sigmoid'))
     simple_RNN.compile(optimizer='rmsprop',
                        loss='binary_crossentropy',
-                       metrics=['accuracy', Precision(), Recall(), F1Score(num_classes=1, average='micro')])
+                       metrics=['accuracy', Precision(), Recall(), AUC(), F1Score(num_classes=1, average='micro')])
     return simple_RNN
 
 
@@ -98,6 +99,7 @@ class ConfusionMatrixCallback(Callback):
     comet.ml callback for keras, to create a confusion matrix per epoch
     Reference: https://www.comet.ml/site/debugging-classifiers-with-confusion-matrices/
     """
+
     def __init__(self, experiment, inputs, targets, cutoff=0.5):
         self.experiment = experiment
         self.inputs = inputs
