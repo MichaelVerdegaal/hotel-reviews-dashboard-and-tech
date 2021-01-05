@@ -26,15 +26,6 @@ if __name__ == '__main__':
     timestamp = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M')
     checkpoint_filepath = os.path.join(ROOT_DIR, (f'static/models/{timestamp}/' +
                                                   'Epoch-{epoch:02d}_ValLoss-{val_loss:.4f}.h5'))
-    # Set seed for reproducible results, necessary due to our use case
-    seed_value = 1
-    os.environ['PYTHONHASHSEED'] = str(seed_value)
-    import random
-    import numpy as np
-    import tensorflow as tf
-    random.seed(seed_value)
-    np.random.seed(seed_value)
-    tf.random.set_seed(seed_value)
 
     # Model config
     data_size = 0
@@ -43,8 +34,6 @@ if __name__ == '__main__':
     input_length = 200
     batch_size = 10000
     epochs = 50
-
-
 
     # Prepare dataset
     db = create_connection()
