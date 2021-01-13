@@ -11,6 +11,8 @@ if __name__ == '__main__':
     This is the general script used to train our Recurrent Neural Networks. To use, make sure you've set your comet.ml
     API key as an environment variable. Lastly, tweak the config variables to your liking, and run the file.
     """
+
+    # Enable this line if you cant run the code on your gpu.
     import os
     os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
