@@ -102,14 +102,14 @@ def create_lstm(max_words, output_dim, input_length):
     :param output_dim: dimension size of the output
     :return: Keras LSTM model
     """
-    simple_RNN = Sequential()
-    simple_RNN.add(layers.Embedding(max_words, output_dim, input_length=input_length))
-    simple_RNN.add(layers.LSTM(output_dim))
-    simple_RNN.add(layers.Dense(1, activation='sigmoid'))
-    simple_RNN.compile(optimizer='rmsprop',
-                       loss='binary_crossentropy',
-                       metrics=[Precision(), Recall()])
-    return simple_RNN
+    LSTM = Sequential()
+    LSTM.add(layers.Embedding(max_words, output_dim, input_length=input_length))
+    LSTM.add(layers.LSTM(output_dim))
+    LSTM.add(layers.Dense(1, activation='sigmoid'))
+    LSTM.compile(optimizer='rmsprop',
+                 loss='binary_crossentropy',
+                 metrics=[Precision(), Recall()])
+    return LSTM
 
 
 def create_gru(max_words, output_dim, input_length):
@@ -120,14 +120,14 @@ def create_gru(max_words, output_dim, input_length):
     :param output_dim: dimension size of the output
     :return: Keras GRU model
     """
-    simple_RNN = Sequential()
-    simple_RNN.add(layers.Embedding(max_words, output_dim, input_length=input_length))
-    simple_RNN.add(layers.GRU(output_dim))
-    simple_RNN.add(layers.Dense(1, activation='sigmoid'))
-    simple_RNN.compile(optimizer='rmsprop',
-                       loss='binary_crossentropy',
-                       metrics=['accuracy', Precision(), Recall(), AUC()])
-    return simple_RNN
+    GRU = Sequential()
+    GRU.add(layers.Embedding(max_words, output_dim, input_length=input_length))
+    GRU.add(layers.GRU(output_dim))
+    GRU.add(layers.Dense(1, activation='sigmoid'))
+    GRU.compile(optimizer='rmsprop',
+                loss='binary_crossentropy',
+                metrics=['accuracy', Precision(), Recall(), AUC()])
+    return GRU
 
 
 class ConfusionMatrixCallback(Callback):
