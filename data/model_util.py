@@ -90,7 +90,7 @@ def create_simple_rnn(max_words, output_dim, input_length):
     simple_RNN.add(layers.Dense(1, activation='sigmoid'))
     simple_RNN.compile(optimizer='rmsprop',
                        loss='binary_crossentropy',
-                       metrics=['accuracy', Precision(), Recall(), AUC()])
+                       metrics=[Precision(), Recall()])
     return simple_RNN
 
 
@@ -126,7 +126,7 @@ def create_gru(max_words, output_dim, input_length):
     GRU.add(layers.Dense(1, activation='sigmoid'))
     GRU.compile(optimizer='rmsprop',
                 loss='binary_crossentropy',
-                metrics=['accuracy', Precision(), Recall(), AUC()])
+                metrics=[Precision(), Recall()])
     return GRU
 
 
