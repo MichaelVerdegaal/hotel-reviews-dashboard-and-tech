@@ -5,6 +5,7 @@ import comet_ml
 import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
+from tensorflow.keras.metrics import Precision, Recall
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
@@ -13,8 +14,6 @@ from tensorflow.python.keras.utils.np_utils import to_categorical
 
 from config import ROOT_DIR
 from data.file_util import pickle_object, read_pickled_object
-from tensorflow.keras.metrics import Precision, Recall, AUC
-from tensorflow_addons.metrics import F1Score, FBetaScore
 
 
 def save_model(model, filename):
@@ -86,7 +85,7 @@ def create_simple_rnn(max_words, output_dim, input_length):
     """
     simple_RNN = Sequential()
     simple_RNN.add(layers.Embedding(max_words, output_dim, input_length=input_length))
-    simple_RNN.add(layers.SimpleRNN(output_dim, dropout=0.1))
+    simple_RNN.add(layers.SimpleRNN(output_dim))
     simple_RNN.add(layers.Dense(1, activation='sigmoid'))
     simple_RNN.compile(optimizer='rmsprop',
                        loss='binary_crossentropy',
