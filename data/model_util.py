@@ -95,7 +95,7 @@ def create_simple_rnn(max_words, output_dim, input_length):
 
 def create_lstm(max_words, output_dim, input_length):
     """
-    Create a basic recurrent neural network
+    Create a LSTM recurrent neural network
     :param max_words: size of the vocabulary
     :param input_length: length of input sequences
     :param output_dim: dimension size of the output
@@ -113,7 +113,7 @@ def create_lstm(max_words, output_dim, input_length):
 
 def create_gru(max_words, output_dim, input_length):
     """
-    Create a basic recurrent neural network
+    Create a GRU recurrent neural network
     :param max_words: size of the vocabulary
     :param input_length: length of input sequences
     :param output_dim: dimension size of the output
