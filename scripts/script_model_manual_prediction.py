@@ -11,7 +11,7 @@ if __name__ == '__main__':
     then just run the file.
     """
     print("Loading model...\n")
-    model = read_model("models/2021-01-04_21-18/Epoch-26_ValLoss-0.186.h5")
+    model = read_model("/models/2021_01_12-10_20 GRU/Epoch-08_ValLoss-0.1585.h5")
     print(model.summary())
 
     review_list = [

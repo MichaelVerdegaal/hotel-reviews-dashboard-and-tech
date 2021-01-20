@@ -70,13 +70,13 @@ if __name__ == '__main__':
     # callbacks.append(ConfusionMatrixCallback(experiment, data_test, label_test))
 
     # Train model
-    history = model.fit(data_train,
-                        label_train,
-                        epochs=epochs,
-                        batch_size=batch_size,
-                        validation_data=(data_test, label_test),
-                        callbacks=callbacks,
-                        use_multiprocessing=True)
+    training_results = model.fit(data_train,
+                                 label_train,
+                                 epochs=epochs,
+                                 batch_size=batch_size,
+                                 validation_data=(data_test, label_test),
+                                 callbacks=callbacks,
+                                 use_multiprocessing=True)
 
     # Upload custom metrics
     test_pred = (model.predict(data_test) > 0.5).astype("int32")
