@@ -217,7 +217,19 @@ function fillSentimentModal() {
             contentType: 'application/json',
             dataType: 'json',
             success: function (result) {
-                console.log(result);
+                let rnn_conf = (result['RNN'][0] * 100).toFixed(4);
+                let rnn_pred = result['RNN'][1];
+                let lstm_conf = (result['LSTM'][0] * 100).toFixed(4);
+                let lstm_pred = result['LSTM'][1];
+                let gru_conf = ( result['GRU'][0] * 100).toFixed(4);
+                let gru_pred = result['GRU'][1];
+
+                $('#rnn_conf').text(`The model is ${rnn_conf}% confident about this choice`);
+                $('#rnn_pred').text(`Your text has a ${rnn_pred} sentiment`);
+                $('#lstm_conf').text(`The model is ${lstm_conf}% confident about this choice`);
+                $('#lstm_pred').text(`Your text has a ${lstm_pred} sentiment`);
+                $('#gru_conf').text(`The model is ${gru_conf}% confident about this choice`);
+                $('#gru_pred').text(`Your text has a ${gru_pred} sentiment`);
             }
         });
     });
