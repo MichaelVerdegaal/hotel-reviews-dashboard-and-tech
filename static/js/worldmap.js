@@ -208,6 +208,9 @@ function fillSentimentModal() {
     $('#sentiment_modal').modal();
     $('#raw-review-btn').click(function () {
         let reviewText = $('#raw-review').val();
+        if (reviewText.length >= 1990) {
+            reviewText = reviewText.substring(0, 1990);
+        }
         let endpoint = `/judge/${reviewText}`;
         $.ajax({
             url: endpoint,
