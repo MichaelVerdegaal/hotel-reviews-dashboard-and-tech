@@ -206,5 +206,8 @@ function fillHotelModal(props) {
 
 function fillSentimentModal() {
     $('#sentiment_modal').modal();
-
+    $('#raw-review-btn').click(function () {
+        let reviewText = $('#raw-review').val();
+        console.log(reviewText);
+    })
 }
