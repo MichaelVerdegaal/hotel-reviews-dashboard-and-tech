@@ -33,5 +33,13 @@ def ajax_hotel(hotel_name):
     return review_json
 
 
+@app.route('/judge/<string:raw_review>')
+def ajax_judge_sentiment(raw_review):
+    print(raw_review)
+    return {'RNN': 'positive',
+            'LSTM': 'positive',
+            'GRU': 'negative'}
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=1205)

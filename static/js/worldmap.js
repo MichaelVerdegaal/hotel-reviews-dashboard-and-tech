@@ -208,6 +208,14 @@ function fillSentimentModal() {
     $('#sentiment_modal').modal();
     $('#raw-review-btn').click(function () {
         let reviewText = $('#raw-review').val();
-        console.log(reviewText);
-    })
+        let endpoint = `/judge/${reviewText}`;
+        $.ajax({
+            url: endpoint,
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+            }
+        });
+    });
 }
