@@ -203,3 +203,8 @@ function fillHotelModal(props) {
         ],
     });
 }
+
+function fillSentimentModal() {
+    $('#sentiment_modal').modal();
+
+}

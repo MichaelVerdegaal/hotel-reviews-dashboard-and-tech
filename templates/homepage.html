@@ -27,7 +27,7 @@
 <div id="map-container"></div>
 <div class="map-overlay top">
     <div class="map-overlay-inner">
-        <h4>Filter hotels</h4>
+        <h4>Filter hotels 🔎</h4>
         <hr>
         <h6>By review amount</h6>
         <label id="count-lbl"></label>
@@ -36,13 +36,32 @@
         <h6>By average review score</h6>
         <label id="review-lbl"></label>
         <input id="review-slider" type="range" min="0.0" max="10.0" step="0.1" value="0.0"/>
+        <hr>
+        <h4>Evaluate your own reviews 🧠</h4>
+        <button type="button" class="btn btn-info btn-lg btn-block" id="sentiment-btn">click here to enter</button>
     </div>
 </div>
 
 
-<!-- Modal -->
+<!-- Modals -->
 <div class="modal left fade" id="left_modal_xl" tabindex="-1" role="dialog" aria-labelledby="left_modal">
     <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Modal Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                Placeholder text
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sentiment_modal" tabindex="-1" role="dialog" aria-labelledby="left_modal">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modal-title">Modal Title</h5>
@@ -64,5 +83,11 @@
     let hotels = {{ hotels | safe }};
     console.log(hotels);
     createMap(hotels)
+
+    $('#sentiment-btn').click(function () {
+        fillSentimentModal();
+    });
+
+
 </script>
 </html>
