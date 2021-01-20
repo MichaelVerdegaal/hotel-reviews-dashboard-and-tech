@@ -221,7 +221,7 @@ function fillSentimentModal() {
                 let rnn_pred = result['RNN'][1];
                 let lstm_conf = (result['LSTM'][0] * 100).toFixed(4);
                 let lstm_pred = result['LSTM'][1];
-                let gru_conf = ( result['GRU'][0] * 100).toFixed(4);
+                let gru_conf = (result['GRU'][0] * 100).toFixed(4);
                 let gru_pred = result['GRU'][1];
 
                 $('#rnn_conf').text(`The model is ${rnn_conf}% confident about this choice`);
@@ -230,6 +230,22 @@ function fillSentimentModal() {
                 $('#lstm_pred').text(`Your text has a ${lstm_pred} sentiment`);
                 $('#gru_conf').text(`The model is ${gru_conf}% confident about this choice`);
                 $('#gru_pred').text(`Your text has a ${gru_pred} sentiment`);
+
+                if (rnn_pred === "Positive") {
+                    $('div#rnn-body').css("background-color", "lightgreen");
+                } else {
+                    $('div#rnn-body').css("background-color", "indianred");
+                }
+                if (lstm_pred === "Positive") {
+                    $('div#lstm-body').css("background-color", "lightgreen");
+                } else {
+                    $('div#lstm-body').css("background-color", "indianred");
+                }
+                if (gru_pred === "Positive") {
+                    $('div#gru-body').css("background-color", "lightgreen");
+                } else {
+                    $('div#gru-body').css("background-color", "indianred");
+                }
             }
         });
     });
